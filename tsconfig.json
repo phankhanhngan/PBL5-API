@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "allowJs": true, //allow compiling js files
+    "target": "es6"
+  },
+    "include": [
+        "src/**/*", //include all files in src folder to be compiled
+        "index.ts"
+    ]
+}
