@@ -1,48 +1,48 @@
-import { NextFunction, Request, Response } from 'express';
-import Account, { IAccount } from '../models/account.model';
-import accountService from '../services/account.service';
-import AccountModel from '../models/account.model';
-import * as mongoose from 'mongoose';
-import AppError from '../utils/appError';
+import parkingsiteService from '../services/parkingsite.service';
+import { Request, Response, NextFunction } from 'express';
+import ParkingsiteModel from '../models/parkingsite.model';
 
-class accountController {
-  private accountService: accountService;
-  constructor(accountService: accountService) {
-    this.accountService = accountService;
+class parkingsiteController {
+  private parkingsiteService: parkingsiteService;
+  constructor(parkingsiteService: parkingsiteService) {
+    this.parkingsiteService = parkingsiteService;
   }
 
   create = async (req: Request, res: Response, next: NextFunction) => {
-    const { username, password, type, name, phone } = req.body;
-    const account = new AccountModel({
-      username,
-      password,
-      type,
+    const { name, maxSpot, price, description, lat, lgn, address } = req.body;
+    const parkingsite = new ParkingsiteModel({
       name,
-      phone
+      maxSpot,
+      price,
+      description,
+      location: {
+        coordinates: [lat, lgn],
+        address
+      }
     });
     try {
-      await this.accountService.create(account).then((result) => {
+      await this.parkingsiteService.create(parkingsite).then((result) => {
         res.status(200).json({
           status: 'success',
           data: {
-            account: result
+            parkingsite: result
           }
         });
       });
-      next();
     } catch (err) {
       next(err);
     }
+    next();
   };
 
   get = async (req: Request, res: Response, next: NextFunction) => {
     const id: string = req.params.id;
     try {
-      await this.accountService.get(id).then((result) => {
+      await this.parkingsiteService.get(id).then((result) => {
         res.status(200).json({
           status: 'success',
           data: {
-            account: result
+            parkingsite: result
           }
         });
       });
@@ -54,11 +54,11 @@ class accountController {
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.accountService.getAll().then((result) => {
+      await this.parkingsiteService.getAll().then((result) => {
         res.status(200).json({
           status: 'success',
           data: {
-            accounts: result
+            parkingSite: result
           }
         });
       });
@@ -71,20 +71,12 @@ class accountController {
   update = async (req: Request, res: Response, next: NextFunction) => {
     const id: string = req.params.id;
     const update = req.body;
-    if (update.password) {
-      return next(
-        new AppError('This route is not for updating password!', 400)
-      );
-    }
-    if (update.username) {
-      return next(new AppError('You cannot change your username!', 400));
-    }
     try {
-      await this.accountService.update(id, update).then((result) => {
+      await this.parkingsiteService.update(id, update).then((result) => {
         res.status(200).json({
           status: 'success',
           data: {
-            account: result
+            parkingSite: result
           }
         });
       });
@@ -97,7 +89,7 @@ class accountController {
   delete = async (req: Request, res: Response, next: NextFunction) => {
     const id: string = req.params.id;
     try {
-      await this.accountService.delete(id).then((result) => {
+      await this.parkingsiteService.delete(id).then((result) => {
         res.status(200).json({
           status: 'success'
         });
@@ -109,4 +101,4 @@ class accountController {
   };
 }
 
-export default new accountController(new accountService());
+export default new parkingsiteController(new parkingsiteService());

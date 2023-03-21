@@ -5,10 +5,14 @@ import * as dotenv from 'dotenv';
 import Account from '../models/account.model';
 import accountService from '../services/account.service';
 import { promisify } from 'util';
+import AccountService from '../services/account.service';
 dotenv.config({ path: './config.env' });
 
 class authController {
-  constructor() {}
+  private accountService;
+  constructor(accountService: accountService) {
+    this.accountService = accountService;
+  }
 
   createSignToken = (req: Request, res: Response, doc) => {
     const token = jwt.sign({ data: doc._id }, process.env.JWT_SECRET, {
@@ -38,7 +42,7 @@ class authController {
       name,
       phone
     });
-    await accountService
+    await this.accountService
       .createAccount(account)
       .then((result) => {
         this.createSignToken(req, res, result);
@@ -53,7 +57,7 @@ class authController {
         new AppError('Please input username and password to login', 400)
       );
 
-    const account = await accountService.getAccountByUsername(username);
+    const account = await this.accountService.getByUsername(username);
 
     if (!account || !account.correctPassword(password, account.password))
       return next(new AppError('Incorrect username or password!', 401));
@@ -80,7 +84,7 @@ class authController {
     ).catch((err) => next(new AppError(err.message)));
 
     //check if account still exists
-    let account = await accountService.getAccount(decoded.data);
+    let account = await this.accountService.get(decoded.data);
 
     if (!account)
       return next(
@@ -104,7 +108,7 @@ class authController {
   isCurrent = async (req: Request, res: Response, next: NextFunction) => {
     const id: string = req.params.id;
     if (res.locals.account.id === id || res.locals.account.type === 'admin')
-      return next();
+      next();
     else
       return next(
         new AppError('You do not have permissions to access this route!', 400)
@@ -124,4 +128,4 @@ class authController {
   };
 }
 
-export default new authController();
+export default new authController(new AccountService());

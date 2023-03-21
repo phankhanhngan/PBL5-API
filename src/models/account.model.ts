@@ -1,7 +1,8 @@
-import mongoose, { Model, Document, Schema } from 'mongoose';
+import mongoose, { Model, Schema } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 
 export interface IAccount {
+  id?: mongoose.Types.ObjectId;
   username: string;
   password: string;
   isActive?: boolean;

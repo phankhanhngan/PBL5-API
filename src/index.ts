@@ -3,7 +3,9 @@ import { Express, Request, Response } from 'express';
 
 import accountRouter from './routes/account.route';
 import handleError from './utils/handleError';
-import authRoute from './routes/auth.route';
+import authRouter from './routes/auth.route';
+import parkingsiteRouter from './routes/parkingsite.route';
+import * as morgan from 'morgan';
 
 const app: Express = express();
 
@@ -22,9 +24,11 @@ mongoose
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('tiny'));
 
 app.use('/api/accounts', accountRouter);
-app.use('/api/auth', authRoute);
+app.use('/api/auth', authRouter);
+app.use('/api/parkingsites', parkingsiteRouter);
 // middleware handle errors
 app.use(handleError);
 
