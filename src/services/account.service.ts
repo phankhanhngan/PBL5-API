@@ -1,32 +1,32 @@
-import { UpdateQuery } from 'mongoose';
-import Account from '../models/account.model';
+import { Document } from 'mongoose';
+import Account, { IAccount, IAccountMethods } from '../models/account.model';
 
 class accountService {
   constructor() {}
 
-  createAccount = (account) => {
+  create = (account: Document) => {
     return account.save();
   };
 
-  getAccount = (id: string) => {
+  get = (id: string) => {
     return Account.findById(id);
   };
 
-  getAccountByUsername = (username: string) => {
+  getByUsername = (username: string) => {
     return Account.findOne({ username: username }).select('+password');
   };
 
-  getAllAccounts = () => {
+  getAll = () => {
     return Account.find();
   };
 
-  updateAccount = (id: string, account) => {
-    return Account.findByIdAndUpdate(id, account);
+  update = (id: string, account: Document) => {
+    return Account.findByIdAndUpdate(id, account, { new: true });
   };
 
-  deleteAccount = (id: string) => {
+  delete = (id: string) => {
     return Account.findByIdAndDelete(id);
   };
 }
 
-export default new accountService();
+export default accountService;

@@ -9,30 +9,26 @@ accountRouter
   .post(
     authController.protect,
     authController.restrictTo('admin'),
-    accountController.createAccount
+    accountController.create
   )
   .get(
     authController.protect,
     authController.restrictTo('admin'),
-    accountController.getAllAccounts
+    accountController.getAll
   );
 
 accountRouter
   .route('/:id')
-  .get(
-    authController.protect,
-    authController.isCurrent,
-    accountController.getAccount
-  )
+  .get(authController.protect, authController.isCurrent, accountController.get)
   .patch(
     authController.protect,
     authController.isCurrent,
-    accountController.updateAccount
+    accountController.update
   )
   .delete(
     authController.protect,
     authController.restrictTo('admin'),
-    accountController.deleteAccount
+    accountController.delete
   );
 
 export default accountRouter;
