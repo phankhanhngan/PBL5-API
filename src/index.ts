@@ -32,10 +32,6 @@ app.use('/api/parkingsites', parkingsiteRouter);
 // middleware handle errors
 app.use(handleError);
 
-app.get('/api/hi', (req: Request, res: Response) => {
-  res.send('App is running in dev ...');
-});
-
 app.listen(5000, () => {
   console.log('App listening on port 5000...');
 });
