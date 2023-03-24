@@ -1,6 +1,8 @@
 import parkingsiteService from '../services/parkingsite.service';
 import { Request, Response, NextFunction } from 'express';
 import ParkingsiteModel from '../models/parkingsite.model';
+import AppError from '../utils/appError';
+import ComparisonOperator from '../utils/handleComparisonOperator';
 
 class parkingsiteController {
   private parkingsiteService: parkingsiteService;
@@ -36,6 +38,9 @@ class parkingsiteController {
   };
 
   get = async (req: Request, res: Response, next: NextFunction) => {
+    // Resolve conflict route params
+    if (req.params.id === 'nearby') return next();
+
     const id: string = req.params.id;
     try {
       await this.parkingsiteService.get(id).then((result) => {
@@ -53,6 +58,9 @@ class parkingsiteController {
   };
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
+    // if users want to search parking sites, go to the next middleware
+    if (Object.keys(req.query).length !== 0) return next();
+
     try {
       await this.parkingsiteService.getAll().then((result) => {
         res.status(200).json({
@@ -92,6 +100,61 @@ class parkingsiteController {
       await this.parkingsiteService.delete(id).then((result) => {
         res.status(200).json({
           status: 'success'
+        });
+      });
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getNearby = async (req: Request, res: Response, next: NextFunction) => {
+    let { distance, lat, lng } = req.query;
+    if (!lat || !lng) {
+      next(
+        new AppError(
+          'Please provide latitude and longitude in the format lat,lng.',
+          400
+        )
+      );
+    }
+    // Distance will be distance or 10 km
+    // Convert distance to radius
+    let radius = 10 / 6378.1;
+    if (typeof distance === 'string') {
+      radius = parseFloat(distance) / 6378.1;
+    }
+
+    try {
+      await this.parkingsiteService
+        .getNearby(lat, lng, radius, req.query)
+        .then((result) => {
+          res.status(200).json({
+            status: 'success',
+            data: {
+              result: result.length,
+              parkingsite: result
+            }
+          });
+        });
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  search = async (req: Request, res: Response, next: NextFunction) => {
+    // If users simply want to get all parkingsite without searching
+    if (Object.keys(req.query).length === 0) return next();
+
+    try {
+      await this.parkingsiteService.search(req.query).then((result) => {
+        res.status(200).json({
+          status: 'success',
+          data: {
+            result: result.length,
+            parkingsite: result
+          }
         });
       });
       next();

@@ -29,8 +29,13 @@ const ParkingSiteSchema: Schema = new Schema<
   price: { type: Number, required: true },
   description: { type: String, required: true },
   location: {
-    coordinates: { type: [Number], required: true },
-    address: { type: String, required: true }
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point']
+    },
+    coordinates: [Number],
+    address: String
   }
 });
 
@@ -39,6 +44,7 @@ ParkingSiteSchema.pre<IParkingSite>('save', function (next) {
     replacement: '-',
     lower: true
   });
+  this.availableSpot = this.maxSpot;
   next();
 });
 

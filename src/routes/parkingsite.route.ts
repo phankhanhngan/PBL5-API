@@ -6,7 +6,7 @@ const parkingSiteRouter = express.Router();
 
 parkingSiteRouter
   .route('/')
-  .get(parkingsiteController.getAll)
+  .get(parkingsiteController.getAll, parkingsiteController.search)
   .post(
     authController.protect,
     authController.restrictTo('admin'),
@@ -27,6 +27,7 @@ parkingSiteRouter
     parkingsiteController.delete
   );
 
-parkingSiteRouter.route('/:id/nearby').get();
+// /api/parkingsites/search?distance=&price=&availableSpot=
+parkingSiteRouter.route('/nearby').get(parkingsiteController.getNearby);
 
 export default parkingSiteRouter;
