@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import Account, { IAccount } from '../models/account.model';
 import accountService from '../services/account.service';
 import AccountModel from '../models/account.model';
-import * as mongoose from 'mongoose';
 import AppError from '../utils/appError';
 
 class accountController {
@@ -53,11 +51,14 @@ class accountController {
   };
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
+    if (Object.keys(req.query).length !== 0) return next();
+
     try {
       await this.accountService.getAll().then((result) => {
         res.status(200).json({
           status: 'success',
           data: {
+            result: result.length,
             accounts: result
           }
         });
@@ -100,6 +101,25 @@ class accountController {
       await this.accountService.delete(id).then((result) => {
         res.status(200).json({
           status: 'success'
+        });
+      });
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  search = async (req: Request, res: Response, next: NextFunction) => {
+    if (Object.keys(req.query).length === 0) return next();
+
+    try {
+      await this.accountService.search(req.query).then((result) => {
+        res.status(200).json({
+          status: 'success',
+          data: {
+            result: result.length,
+            accounts: result
+          }
         });
       });
       next();
