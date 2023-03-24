@@ -47,22 +47,22 @@ class parkingsiteService {
   search = (reqQuery) => {
     const searchQuery = {};
 
-    searchQuery['price'] = reqQuery.price
-      ? new ComparisonOperator(reqQuery.price).format()
-      : null;
+    if (reqQuery.price) {
+      searchQuery['price'] = new ComparisonOperator(reqQuery.price).format();
+    }
 
-    searchQuery['availableSpot'] = reqQuery.avail
-      ? new ComparisonOperator(reqQuery.avail).format()
-      : null;
+    if (reqQuery.avail) {
+      searchQuery['availableSpot'] = new ComparisonOperator(
+        reqQuery.avail
+      ).format();
+    }
 
-    searchQuery['$text'] = reqQuery.keyword
-      ? { $search: `"${reqQuery.keyword}"` }
-      : null;
+    //Must have "" around the keyword to search for exact match
+    //If not, it will split the keyword into words and search for fields match each word
+    if (reqQuery.keyword) {
+      searchQuery['$text'] = { $search: `"${reqQuery.keyword}"` };
+    }
 
-    Object.keys(searchQuery).forEach((key) => {
-      if (searchQuery[key] === null) delete searchQuery[key];
-    });
-    console.log(searchQuery);
     return parkingsite.find({ ...searchQuery });
   };
 }

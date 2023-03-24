@@ -14,7 +14,8 @@ accountRouter
   .get(
     authController.protect,
     authController.restrictTo('admin'),
-    accountController.getAll
+    accountController.getAll,
+    accountController.search
   );
 
 accountRouter
