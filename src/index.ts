@@ -6,8 +6,12 @@ import handleError from './utils/handleError';
 import authRouter from './routes/auth.route';
 import parkingsiteRouter from './routes/parkingsite.route';
 import * as morgan from 'morgan';
+import * as cors from 'cors';
 
 const app: Express = express();
+
+// config cors
+app.use(cors());
 
 // config env
 require('dotenv').config({ path: './config.env' });
