@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import Account, { IAccount, IAccountMethods } from '../models/account.model';
+import Account from '../models/account.model';
 
 class accountService {
   constructor() {}

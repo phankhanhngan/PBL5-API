@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import parkingsite, { IParkingSite } from '../models/parkingsite.model';
+import parkingsite from '../models/parkingsite.model';
 import ComparisonOperator from '../utils/handleComparisonOperator';
 
 class parkingsiteService {

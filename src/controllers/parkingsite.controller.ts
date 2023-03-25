@@ -2,7 +2,6 @@ import parkingsiteService from '../services/parkingsite.service';
 import { Request, Response, NextFunction } from 'express';
 import ParkingsiteModel from '../models/parkingsite.model';
 import AppError from '../utils/appError';
-import ComparisonOperator from '../utils/handleComparisonOperator';
 
 class parkingsiteController {
   private parkingsiteService: parkingsiteService;
