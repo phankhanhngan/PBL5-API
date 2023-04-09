@@ -5,13 +5,19 @@ import accountRouter from './routes/account.route';
 import handleError from './utils/handleError';
 import authRouter from './routes/auth.route';
 import parkingsiteRouter from './routes/parkingsite.route';
+import reservationRouter from './routes/reservation.route';
 import * as morgan from 'morgan';
 import * as cors from 'cors';
 
 const app: Express = express();
 
 // config cors
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: 'http://localhost:5000'
+  })
+);
 
 // config env
 require('dotenv').config({ path: './config.env' });
@@ -33,6 +39,7 @@ app.use(morgan('tiny'));
 app.use('/api/accounts', accountRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/parkingsites', parkingsiteRouter);
+app.use('/api/reservation', reservationRouter);
 // middleware handle errors
 app.use(handleError);
 
