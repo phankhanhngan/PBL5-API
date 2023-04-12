@@ -109,7 +109,7 @@ class parkingsiteController {
   };
 
   getNearby = async (req: Request, res: Response, next: NextFunction) => {
-    let { distance, lat, lng } = req.query;
+    const { distance, lat, lng } = req.query;
     if (!lat || !lng) {
       next(
         new AppError(
