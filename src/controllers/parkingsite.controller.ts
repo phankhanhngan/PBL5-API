@@ -10,14 +10,14 @@ class parkingsiteController {
   }
 
   create = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, maxSpot, price, description, lat, lgn, address } = req.body;
+    const { name, maxSpot, price, description, lng, lat, address } = req.body;
     const parkingsite = new ParkingsiteModel({
       name,
       maxSpot,
       price,
       description,
       location: {
-        coordinates: [lat, lgn],
+        coordinates: [lng, lat],
         address
       }
     });
@@ -109,7 +109,7 @@ class parkingsiteController {
   };
 
   getNearby = async (req: Request, res: Response, next: NextFunction) => {
-    let { distance, lat, lng } = req.query;
+    const { distance, lng, lat } = req.query;
     if (!lat || !lng) {
       next(
         new AppError(
@@ -127,7 +127,7 @@ class parkingsiteController {
 
     try {
       await this.parkingsiteService
-        .getNearby(lat, lng, radius, req.query)
+        .getNearby(lng, lat, radius, req.query)
         .then((result) => {
           res.status(200).json({
             status: 'success',
