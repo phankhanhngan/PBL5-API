@@ -25,7 +25,7 @@ class parkingsiteService {
     return parkingsite.findByIdAndDelete(id);
   };
 
-  getNearby = (latitude, longitude, radius, reqQuery) => {
+  getNearby = (longitude, latitude, radius, reqQuery) => {
     const priceQuery = reqQuery.price
       ? new ComparisonOperator(reqQuery.price).format()
       : { $gt: 0 };
@@ -36,7 +36,7 @@ class parkingsiteService {
     return parkingsite.find({
       location: {
         $geoWithin: {
-          $centerSphere: [[latitude, longitude], radius]
+          $centerSphere: [[longitude, latitude], radius]
         }
       },
       price: { ...priceQuery },
