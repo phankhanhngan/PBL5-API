@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Parking web app API using NodeJS",
   "main": "index.ts",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "nodemon src/index.ts",
     "lint": "eslint . --ext .ts"
