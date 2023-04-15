@@ -23,6 +23,7 @@
   "homepage": "https://github.com/phankhanhngan/PBL5-API#readme",
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/node": "^18.15.11",
     "bcryptjs": "^2.4.3",
     "concurrently": "^7.6.0",
     "cors": "^2.8.5",
@@ -39,7 +40,6 @@
     "@types/body-parser": "^1.19.2",
     "@types/express": "^4.17.17",
     "@types/mongoose": "^5.11.97",
-    "@types/node": "^18.15.3",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.55.0",
     "eslint": "^8.36.0",
