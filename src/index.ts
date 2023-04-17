@@ -19,14 +19,6 @@ app.use(
   })
 );
 
-app.use(function (req: Request, res: Response, next: NextFunction) {
-  res.header('Access-Control-Allow-Origin', '127.0.0.1:3000'); // update to match the domain you will make the request from
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-  next();
-});
 // config env
 require('dotenv').config({ path: './config.env' });
 
