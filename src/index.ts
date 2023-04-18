@@ -9,6 +9,8 @@ import reservationRouter from './routes/reservation.route';
 import * as morgan from 'morgan';
 import * as cors from 'cors';
 
+import * as jwt from 'jsonwebtoken';
+
 const app: Express = express();
 
 // config cors
@@ -40,6 +42,18 @@ app.use('/api/accounts', accountRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/parkingsites', parkingsiteRouter);
 app.use('/api/reservation', reservationRouter);
+app.post('/decode', function (req: Request, res: Response, next: NextFunction) {
+  const { token } = req.query;
+  console.log(token);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  res.status(200).json({
+    status: 'success',
+    data: {
+      decoded
+    }
+  });
+  next();
+});
 // middleware handle errors
 app.use(handleError);
 

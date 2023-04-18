@@ -162,6 +162,15 @@ class parkingsiteController {
       next(err);
     }
   };
+
+  updateSpot = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.parkingsiteService.updateSpot(res.locals.parkingSite);
+    } catch (err) {
+      next(err);
+    }
+    next();
+  };
 }
 
 export default new parkingsiteController(new parkingsiteService());

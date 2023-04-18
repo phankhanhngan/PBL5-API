@@ -1,6 +1,7 @@
 import * as express from 'express';
 import authController from '../controllers/auth.controller';
 import reservationController from '../controllers/reservation.controller';
+import parkingsiteController from '../controllers/parkingsite.controller';
 
 const reservationRouter = express.Router();
 
@@ -31,6 +32,10 @@ reservationRouter
 
 reservationRouter
   .route('/checkin')
-  .get(reservationController.checkin, reservationController.update);
+  .get(
+    reservationController.checkin,
+    reservationController.update,
+    parkingsiteController.updateSpot
+  );
 
 export default reservationRouter;
