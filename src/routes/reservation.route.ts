@@ -19,6 +19,14 @@ reservationRouter
   );
 
 reservationRouter
+  .route('/checkin')
+  .get(
+    reservationController.checkin,
+    reservationController.update,
+    parkingsiteController.updateSpot
+  );
+
+reservationRouter
   .route('/:id')
   .get(authController.protect, reservationController.get);
 
@@ -28,14 +36,6 @@ reservationRouter
     authController.protect,
     authController.restrictTo('user'),
     reservationController.getMyReservation
-  );
-
-reservationRouter
-  .route('/checkin')
-  .get(
-    reservationController.checkin,
-    reservationController.update,
-    parkingsiteController.updateSpot
   );
 
 export default reservationRouter;

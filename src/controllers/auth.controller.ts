@@ -43,7 +43,7 @@ class authController {
       phone
     });
     await this.accountService
-      .createAccount(account)
+      .create(account)
       .then((result) => {
         this.createSignToken(req, res, result);
       })
