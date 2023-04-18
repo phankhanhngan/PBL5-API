@@ -65,6 +65,12 @@ class parkingsiteService {
 
     return parkingsite.find({ ...searchQuery });
   };
+
+  updateSpot = (id: string) => {
+    return parkingsite.findByIdAndUpdate(id, {
+      $inc: { availableSpot: -1 }
+    });
+  };
 }
 
 export default parkingsiteService;

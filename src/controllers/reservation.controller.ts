@@ -121,6 +121,7 @@ class reservationController {
       }
     });
     res.locals.reservation = reservation[0]._id;
+    res.locals.parkingSite = reservation[0].parkingSite;
     next();
   };
 
