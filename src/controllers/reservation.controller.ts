@@ -75,10 +75,10 @@ class reservationController {
       return next();
 
     const { id } = req.params;
-    const reservation = await this.reservationService.get(id);
+    const reservation: any = await this.reservationService.get(id);
     if (reservation !== null) {
       if (
-        res.locals.account._id.equals(reservation.account) ||
+        res.locals.account._id.equals(reservation.account._id) ||
         res.locals.account.type === 'admin'
       ) {
         res.status(200).json({

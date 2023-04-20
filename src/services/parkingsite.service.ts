@@ -17,8 +17,18 @@ class parkingsiteService {
     return parkingsite.find();
   };
 
-  update = (id: string, parkingSite: Document) => {
-    return parkingsite.findOneAndUpdate({ id: id }, parkingSite, { new: true });
+  update = async (id: string, parkingSite) => {
+    const ps: any = await parkingsite.findById(id);
+    if (parkingSite.name) ps.name = parkingSite.name;
+    if (parkingSite.address) ps.address = parkingSite.address;
+    if (parkingSite.maxSpot) ps.maxSpot = parkingSite.maxSpot;
+    if (parkingSite.price) ps.price = parkingSite.price;
+    if (parkingSite.description) ps.description = parkingSite.description;
+    if (parkingSite.location.coordinates)
+      ps.location.coordinates = parkingSite.location.coordinates;
+    if (parkingSite.location.address)
+      ps.location.address = parkingSite.location.address;
+    return ps.save();
   };
 
   delete = (id: string) => {

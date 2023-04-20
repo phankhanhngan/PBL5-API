@@ -44,18 +44,8 @@ ParkingSiteSchema.pre<IParkingSite>('save', function (next) {
     replacement: '-',
     lower: true
   });
-  this.availableSpot = this.maxSpot;
-  next();
-});
-
-ParkingSiteSchema.pre<any>('findOneAndUpdate', function (next) {
-  const { _update: update } = this;
-  this._update.slug = slugify(this.get('name'), {
-    replacement: '-',
-    lower: true
-  });
-  if (update.maxSpot) this._update.availableSpot = update.maxSpot;
-  this.save();
+  if (!this.availableSpot || this.isModified('maxSpot'))
+    this.availableSpot = this.maxSpot;
   next();
 });
 
