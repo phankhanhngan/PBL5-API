@@ -6,8 +6,11 @@ import handleError from './utils/handleError';
 import authRouter from './routes/auth.route';
 import parkingsiteRouter from './routes/parkingsite.route';
 import reservationRouter from './routes/reservation.route';
+import * as jwt from 'jsonwebtoken';
 import * as morgan from 'morgan';
 import * as cors from 'cors';
+
+import accountService from './services/account.service';
 
 const app: Express = express();
 
@@ -40,6 +43,21 @@ app.use('/api/accounts', accountRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/parkingsites', parkingsiteRouter);
 app.use('/api/reservation', reservationRouter);
+
+app
+  .route('/decode')
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.body.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const account = await new accountService().get(decoded.data);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        account
+      }
+    });
+  });
+
 // middleware handle errors
 app.use(handleError);
 
