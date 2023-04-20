@@ -75,10 +75,10 @@ class reservationController {
       return next();
 
     const { id } = req.params;
-    const reservation = await this.reservationService.get(id);
+    const reservation: any = await this.reservationService.get(id);
     if (reservation !== null) {
       if (
-        res.locals.account._id.equals(reservation.account) ||
+        res.locals.account._id.equals(reservation.account._id) ||
         res.locals.account.type === 'admin'
       ) {
         res.status(200).json({
@@ -102,27 +102,34 @@ class reservationController {
     const reservation = await this.reservationService.getByLp(
       lpNumber.toString()
     );
-    console.log(reservation[0].enteringTime);
-    if (
-      new Date().getTime() - reservation[0].reservingTime.getTime() > 3600000 ||
-      reservation[0].enteringTime !== undefined
-    ) {
-      res.status(400).json({
-        status: 'fail',
-        message:
-          'Your reservation is late for checking in or you have checked in with this reservation before!'
-      });
-      return next();
-    }
-    res.status(200).json({
-      status: 'success',
-      data: {
-        reservation
+    if (reservation[0] !== undefined) {
+      if (
+        new Date().getTime() - reservation[0].reservingTime.getTime() >
+          3600000 ||
+        reservation[0].enteringTime !== undefined
+      ) {
+        return next(
+          new AppError(
+            'You have been checked in before or your registration has expired!'
+          )
+        );
+      } else {
+        res.status(200).json({
+          status: 'success',
+          data: {
+            reservation
+          }
+        });
+        res.locals.reservation = reservation[0]._id;
+        res.locals.parkingSite = reservation[0].parkingSite;
+        return next();
       }
-    });
-    res.locals.reservation = reservation[0]._id;
-    res.locals.parkingSite = reservation[0].parkingSite;
-    next();
+    } else {
+      console.log('else');
+      return next(
+        new AppError('There is no reservation found with that lp number!')
+      );
+    }
   };
 
   update = async (req: Request, res: Response, next: NextFunction) => {
@@ -130,6 +137,7 @@ class reservationController {
       await this.reservationService.update(res.locals.reservation);
       next();
     } catch (err) {
+      console.log('err in update reservation');
       return next(err);
     }
   };
