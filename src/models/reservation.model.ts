@@ -35,6 +35,10 @@ const ReservationSchema: Schema = new Schema<
   }
 });
 
+ReservationSchema.pre('find', function () {
+  this.populate('account', 'name email phone');
+});
+
 export default mongoose.model<IReservation, ReservationModel>(
   'Reservation',
   ReservationSchema

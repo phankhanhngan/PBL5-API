@@ -18,7 +18,7 @@ class parkingsiteService {
   };
 
   update = (id: string, parkingSite: Document) => {
-    return parkingsite.findByIdAndUpdate(id, parkingSite, { new: true });
+    return parkingsite.findOneAndUpdate({ id: id }, parkingSite, { new: true });
   };
 
   delete = (id: string) => {
@@ -70,6 +70,10 @@ class parkingsiteService {
     return parkingsite.findByIdAndUpdate(id, {
       $inc: { availableSpot: -1 }
     });
+  };
+
+  isAvailable = (id: string) => {
+    return parkingsite.findById(id).where('availableSpot').gt(0);
   };
 }
 

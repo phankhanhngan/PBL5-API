@@ -169,7 +169,20 @@ class parkingsiteController {
     } catch (err) {
       next(err);
     }
-    next();
+  };
+
+  isAvailable = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { parkingSite } = req.body;
+      await this.parkingsiteService.isAvailable(parkingSite).then((result) => {
+        if (!result) {
+          return next(new AppError('Parking site is not available', 400));
+        }
+        next();
+      });
+    } catch (err) {
+      next(err);
+    }
   };
 }
 

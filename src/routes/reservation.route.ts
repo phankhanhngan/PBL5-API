@@ -6,19 +6,6 @@ import parkingsiteController from '../controllers/parkingsite.controller';
 const reservationRouter = express.Router();
 
 reservationRouter
-  .route('/')
-  .get(
-    authController.protect,
-    authController.restrictTo('admin'),
-    reservationController.getAll
-  )
-  .post(
-    authController.protect,
-    authController.restrictTo('user'),
-    reservationController.create
-  );
-
-reservationRouter
   .route('/checkin')
   .get(
     reservationController.checkin,
@@ -26,14 +13,22 @@ reservationRouter
     parkingsiteController.updateSpot
   );
 
+reservationRouter.use(authController.protect);
+
 reservationRouter
-  .route('/:id')
-  .get(authController.protect, reservationController.get);
+  .route('/')
+  .get(authController.restrictTo('admin'), reservationController.getAll)
+  .post(
+    authController.restrictTo('user'),
+    parkingsiteController.isAvailable,
+    reservationController.create
+  );
+
+reservationRouter.route('/:id').get(reservationController.get);
 
 reservationRouter
   .route('/myreserve')
   .get(
-    authController.protect,
     authController.restrictTo('user'),
     reservationController.getMyReservation
   );
