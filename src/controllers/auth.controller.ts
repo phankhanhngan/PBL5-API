@@ -58,8 +58,11 @@ class authController {
       );
 
     const account = await this.accountService.getByUsername(username);
-
-    if (!account || !account.correctPassword(password, account.password))
+    const correct_pass = await account.correctPassword(
+      password,
+      account.password
+    );
+    if (!account || !correct_pass)
       return next(new AppError('Incorrect username or password!', 401));
     this.createSignToken(req, res, account);
   };
@@ -83,6 +86,7 @@ class authController {
       process.env.JWT_SECRET
     ).catch((err) => next(new AppError(err.message)));
 
+    if (decoded === undefined) return next(new AppError('Invalid token!', 400));
     //check if account still exists
     let account = await this.accountService.get(decoded.data);
 
