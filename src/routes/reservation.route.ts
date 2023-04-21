@@ -19,7 +19,7 @@ reservationRouter
   .route('/')
   .get(authController.restrictTo('admin'), reservationController.getAll)
   .post(
-    authController.restrictTo('user'),
+    // authController.restrictTo('user'),
     parkingsiteController.isAvailable,
     reservationController.create
   );
