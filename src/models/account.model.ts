@@ -41,14 +41,14 @@ AccountSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt(12);
 
   // Replace the password with the hash
-  this.password = await bcrypt.hashSync(this.password, salt);
+  this.password = await bcrypt.hash(this.password, salt);
   return next();
 });
 
 AccountSchema.method(
   'correctPassword',
   async function (candidatePassword: string, password: string) {
-    return await bcrypt.compare(candidatePassword, password);
+    return bcrypt.compare(candidatePassword, password);
   }
 );
 
