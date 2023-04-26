@@ -14,7 +14,7 @@ class parkingsiteService {
   };
 
   getAll = () => {
-    return parkingsite.find();
+    return parkingsite.find().sort({ availableSpot: -1 });
   };
 
   update = async (id: string, parkingSite) => {
@@ -73,7 +73,7 @@ class parkingsiteService {
       searchQuery['$text'] = { $search: `"${reqQuery.keyword}"` };
     }
 
-    return parkingsite.find({ ...searchQuery });
+    return parkingsite.find({ ...searchQuery }).sort({ availableSpot: -1 });
   };
 
   updateSpot = (id: string) => {
