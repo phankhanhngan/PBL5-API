@@ -10,6 +10,8 @@ class reservationController {
   }
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
+    if (Object.keys(req.query).length !== 0) return next();
+
     try {
       await this.reservationService.getAll().then((result) => {
         res.status(200).json({
@@ -53,6 +55,7 @@ class reservationController {
     res: Response,
     next: NextFunction
   ) => {
+    if (Object.keys(req.query).length !== 0) return next();
     const id = res.locals.account._id;
     try {
       await this.reservationService.getMyReservation(id).then((result) => {
@@ -125,7 +128,6 @@ class reservationController {
         return next();
       }
     } else {
-      console.log('else');
       return next(
         new AppError('There is no reservation found with that lp number!')
       );
@@ -139,6 +141,43 @@ class reservationController {
     } catch (err) {
       console.log('err in update reservation');
       return next(err);
+    }
+  };
+
+  search = async (req: Request, res: Response, next: NextFunction) => {
+    if (Object.keys(req.query).length === 0) return next();
+    try {
+      await this.reservationService.search(req.query).then((result) => {
+        res.status(200).json({
+          status: 'success',
+          data: {
+            result: result.length,
+            reservations: result
+          }
+        });
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  searchMy = async (req: Request, res: Response, next: NextFunction) => {
+    if (Object.keys(req.query).length === 0) return next();
+
+    try {
+      await this.reservationService
+        .search(req.query, res.locals.account._id)
+        .then((result) => {
+          res.status(200).json({
+            status: 'success',
+            data: {
+              result: result.length,
+              reservations: result
+            }
+          });
+        });
+    } catch (err) {
+      next(err);
     }
   };
 }

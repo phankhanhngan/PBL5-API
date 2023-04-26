@@ -1,5 +1,7 @@
 import reservation from '../models/reservation.model';
 import { Document } from 'mongoose';
+import parkingsite from '../models/parkingsite.model';
+import * as mongoose from 'mongoose';
 
 class reservationService {
   constructor() {}
@@ -29,6 +31,80 @@ class reservationService {
 
   update = async (id: string) => {
     return reservation.findByIdAndUpdate(id, { enteringTime: new Date() });
+  };
+
+  search = async (reqQuery, account = null) => {
+    let pipe: any = [
+      {
+        $lookup: {
+          from: 'accounts',
+          localField: 'account',
+          foreignField: '_id',
+          as: 'account'
+        }
+      },
+      {
+        $lookup: {
+          from: 'parkingsites',
+          localField: 'parkingSite',
+          foreignField: '_id',
+          as: 'parking'
+        }
+      },
+      {
+        $match: {
+          $and: [
+            {
+              $or: [
+                {
+                  'account.name': {
+                    $regex: `${reqQuery.keyword}`,
+                    $options: 'i'
+                  }
+                },
+                {
+                  lpNumber: {
+                    $regex: `${reqQuery.keyword}`,
+                    $options: 'i'
+                  }
+                },
+                {
+                  'account.username': {
+                    $regex: `${reqQuery.keyword}`,
+                    $options: 'i'
+                  }
+                },
+                {
+                  'account.phone': {
+                    $regex: `${reqQuery.keyword}`,
+                    $options: 'i'
+                  }
+                },
+                {
+                  'parking.name': {
+                    $regex: `${reqQuery.keyword}`,
+                    $options: 'i'
+                  }
+                },
+                {
+                  'parking.location.address': {
+                    $regex: `${reqQuery.keyword}`,
+                    $options: 'i'
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ];
+    if (account !== null)
+      pipe.push({
+        $match: {
+          'account._id': new mongoose.Types.ObjectId(account)
+        }
+      });
+    return reservation.aggregate(pipe);
   };
 }
 

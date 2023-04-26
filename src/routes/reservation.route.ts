@@ -16,8 +16,20 @@ reservationRouter
 reservationRouter.use(authController.protect);
 
 reservationRouter
+  .route('/myreserve')
+  .get(
+    authController.restrictTo('user'),
+    reservationController.getMyReservation,
+    reservationController.searchMy
+  );
+
+reservationRouter
   .route('/')
-  .get(authController.restrictTo('admin'), reservationController.getAll)
+  .get(
+    authController.restrictTo('admin'),
+    reservationController.getAll,
+    reservationController.search
+  )
   .post(
     // authController.restrictTo('user'),
     parkingsiteController.isAvailable,
@@ -25,12 +37,5 @@ reservationRouter
   );
 
 reservationRouter.route('/:id').get(reservationController.get);
-
-reservationRouter
-  .route('/myreserve')
-  .get(
-    authController.restrictTo('user'),
-    reservationController.getMyReservation
-  );
 
 export default reservationRouter;
