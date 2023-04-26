@@ -1,7 +1,7 @@
-import mongoose, { Model, Schema } from 'mongoose';
+import mongoose, { Model, Schema, Document } from 'mongoose';
 import slugify from 'slugify';
 
-export interface IParkingSite {
+export interface IParkingSite extends Document {
   name: string;
   slug?: string;
   maxSpot: number;
@@ -44,15 +44,8 @@ ParkingSiteSchema.pre<IParkingSite>('save', function (next) {
     replacement: '-',
     lower: true
   });
-  this.availableSpot = this.maxSpot;
-  next();
-});
-
-ParkingSiteSchema.pre<IParkingSite>('update', function (next) {
-  this.slug = slugify(this.name, {
-    replacement: '-',
-    lower: true
-  });
+  if (!this.availableSpot || this.isModified('maxSpot'))
+    this.availableSpot = this.maxSpot;
   next();
 });
 

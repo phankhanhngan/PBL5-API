@@ -162,6 +162,28 @@ class parkingsiteController {
       next(err);
     }
   };
+
+  updateSpot = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await this.parkingsiteService.updateSpot(res.locals.parkingSite);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  isAvailable = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { parkingSite } = req.body;
+      await this.parkingsiteService.isAvailable(parkingSite).then((result) => {
+        if (!result) {
+          return next(new AppError('Parking site is not available', 400));
+        }
+        next();
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default new parkingsiteController(new parkingsiteService());

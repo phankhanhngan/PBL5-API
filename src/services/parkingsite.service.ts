@@ -14,11 +14,21 @@ class parkingsiteService {
   };
 
   getAll = () => {
-    return parkingsite.find();
+    return parkingsite.find().sort({ availableSpot: -1 });
   };
 
-  update = (id: string, parkingSite: Document) => {
-    return parkingsite.findByIdAndUpdate(id, parkingSite, { new: true });
+  update = async (id: string, parkingSite) => {
+    const ps: any = await parkingsite.findById(id);
+    if (parkingSite.name) ps.name = parkingSite.name;
+    if (parkingSite.address) ps.address = parkingSite.address;
+    if (parkingSite.maxSpot) ps.maxSpot = parkingSite.maxSpot;
+    if (parkingSite.price) ps.price = parkingSite.price;
+    if (parkingSite.description) ps.description = parkingSite.description;
+    if (parkingSite.location.coordinates)
+      ps.location.coordinates = parkingSite.location.coordinates;
+    if (parkingSite.location.address)
+      ps.location.address = parkingSite.location.address;
+    return ps.save();
   };
 
   delete = (id: string) => {
@@ -63,7 +73,17 @@ class parkingsiteService {
       searchQuery['$text'] = { $search: `"${reqQuery.keyword}"` };
     }
 
-    return parkingsite.find({ ...searchQuery });
+    return parkingsite.find({ ...searchQuery }).sort({ availableSpot: -1 });
+  };
+
+  updateSpot = (id: string) => {
+    return parkingsite.findByIdAndUpdate(id, {
+      $inc: { availableSpot: -1 }
+    });
+  };
+
+  isAvailable = (id: string) => {
+    return parkingsite.findById(id).where('availableSpot').gt(0);
   };
 }
 

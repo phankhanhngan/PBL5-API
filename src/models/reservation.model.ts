@@ -35,6 +35,12 @@ const ReservationSchema: Schema = new Schema<
   }
 });
 
+ReservationSchema.pre(/^find/, function (next) {
+  this.populate('account', 'username');
+  this.populate('parkingSite');
+  next();
+});
+
 export default mongoose.model<IReservation, ReservationModel>(
   'Reservation',
   ReservationSchema

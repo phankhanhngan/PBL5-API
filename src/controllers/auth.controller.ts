@@ -35,64 +35,81 @@ class authController {
   };
 
   signup = async (req: Request, res: Response, next: NextFunction) => {
-    const { username, password, name, phone } = req.body;
-    const account = new Account({
-      username,
-      password,
-      name,
-      phone
-    });
-    await this.accountService
-      .createAccount(account)
-      .then((result) => {
-        this.createSignToken(req, res, result);
-      })
-      .catch((err) => next(new AppError(err.message)));
+    try {
+      const { username, password, name, phone } = req.body;
+      const account = new Account({
+        username,
+        password,
+        name,
+        phone
+      });
+      await this.accountService
+        .create(account)
+        .then((result) => {
+          this.createSignToken(req, res, result);
+        })
+        .catch((err) => next(new AppError(err.message)));
+    } catch (err) {
+      next(err);
+    }
   };
 
   login = async (req: Request, res: Response, next: NextFunction) => {
-    const { username, password } = req.body;
-    if (!username || !password)
-      return next(
-        new AppError('Please input username and password to login', 400)
-      );
+    try {
+      const { username, password } = req.body;
+      if (!username || !password)
+        return next(
+          new AppError('Please input username and password to login', 400)
+        );
 
-    const account = await this.accountService.getByUsername(username);
+      const account = await this.accountService.getByUsername(username);
 
-    if (!account || !account.correctPassword(password, account.password))
-      return next(new AppError('Incorrect username or password!', 401));
-    this.createSignToken(req, res, account);
+      if (
+        !account ||
+        !(await account.correctPassword(password, account.password))
+      )
+        return next(new AppError('Incorrect username or password!', 401));
+      this.createSignToken(req, res, account);
+    } catch (err) {
+      next(err);
+    }
   };
 
   protect = async (req: Request, res: Response, next: NextFunction) => {
-    let token: string = null;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies) {
-      if (req.cookies.jwt && req.cookies.jwt !== 'loggedout')
-        token = req.cookies.jwt;
+    try {
+      let token: string = null;
+      if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+      ) {
+        token = req.headers.authorization.split(' ')[1];
+      } else if (req.cookies) {
+        if (req.cookies.jwt && req.cookies.jwt !== 'loggedout')
+          token = req.cookies.jwt;
+      }
+
+      if (token === null) return next(new AppError('Please log in!', 400));
+
+      const decoded = await promisify(jwt.verify)(
+        token,
+        process.env.JWT_SECRET
+      ).catch((err) => next(new AppError(err.message)));
+
+      if (decoded === undefined)
+        return next(new AppError('Invalid token!', 400));
+      //check if account still exists
+      let account = await this.accountService.get(decoded.data);
+
+      if (!account)
+        return next(
+          new AppError('This token does not belong to this user anymore!')
+        );
+
+      res.locals.account = account;
+      next();
+    } catch (err) {
+      next(err);
     }
-
-    if (token === null) return next(new AppError('Please log in!', 400));
-
-    const decoded = await promisify(jwt.verify)(
-      token,
-      process.env.JWT_SECRET
-    ).catch((err) => next(new AppError(err.message)));
-
-    //check if account still exists
-    let account = await this.accountService.get(decoded.data);
-
-    if (!account)
-      return next(
-        new AppError('This token does not belong to this user anymore!')
-      );
-
-    res.locals.account = account;
-    next();
   };
 
   restrictTo = (...roles) => {
