@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import accountService from '../services/account.service';
 import AccountModel from '../models/account.model';
 import AppError from '../utils/appError';
+import AccountService from '../services/account.service';
+import authController from './auth.controller';
 
 class accountController {
   private accountService: accountService;
@@ -123,6 +125,31 @@ class accountController {
         });
       });
       next();
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  changePassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const account = await this.accountService
+        .get(res.locals.account._id)
+        .select('+password');
+
+      if (
+        !(await account.correctPassword(
+          req.body.currentPassword,
+          account.password
+        ))
+      ) {
+        return next(new AppError('Your current password is wrong.', 401));
+      }
+
+      await this.accountService
+        .updatePassword(account, req.body.newPassword)
+        .then((result) => {
+          authController.createSignToken(req, res, result);
+        });
     } catch (err) {
       next(err);
     }

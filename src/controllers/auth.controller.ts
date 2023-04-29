@@ -25,6 +25,7 @@ class authController {
       httpOnly: true,
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
     });
+    doc.password = undefined;
     res.status(200).json({
       status: 'success',
       data: {
