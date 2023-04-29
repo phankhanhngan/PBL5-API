@@ -11,7 +11,6 @@ import * as morgan from 'morgan';
 import * as cors from 'cors';
 
 import accountService from './services/account.service';
-import * as jwt from 'jsonwebtoken';
 
 const app: Express = express();
 
@@ -44,7 +43,6 @@ app.use('/api/accounts', accountRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/parkingsites', parkingsiteRouter);
 app.use('/api/reservation', reservationRouter);
-
 
 app
   .route('/decode')
