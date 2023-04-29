@@ -24,6 +24,11 @@ class accountService {
     return Account.findByIdAndUpdate(id, account, { new: true });
   };
 
+  updatePassword = (account, password) => {
+    account.password = password;
+    return account.save();
+  };
+
   delete = (id: string) => {
     return Account.findByIdAndDelete(id);
   };
