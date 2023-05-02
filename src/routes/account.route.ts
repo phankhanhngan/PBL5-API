@@ -4,6 +4,10 @@ import authController from '../controllers/auth.controller';
 
 const accountRouter = express.Router();
 
+accountRouter
+  .route('/check-phone/:phone')
+  .get(accountController.isDuplicatePhone);
+
 accountRouter.use(authController.protect);
 
 accountRouter
