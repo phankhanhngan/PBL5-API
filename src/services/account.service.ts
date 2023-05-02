@@ -54,6 +54,10 @@ class accountService {
 
     return Account.find(searchQuery);
   };
+
+  isDuplicatePhone = async (phone: string) => {
+    return Account.exists({ phone: phone });
+  };
 }
 
 export default accountService;

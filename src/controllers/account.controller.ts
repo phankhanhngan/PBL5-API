@@ -154,6 +154,27 @@ class accountController {
       next(err);
     }
   };
+
+  isDuplicatePhone = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      await this.accountService
+        .isDuplicatePhone(req.params.phone)
+        .then((result) => {
+          if (result)
+            return next(new AppError('Phone number is already in use.', 400));
+          res.status(200).json({
+            status: 'success',
+            message: 'Phone number is available.'
+          });
+        });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default new accountController(new accountService());

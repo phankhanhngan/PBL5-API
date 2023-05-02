@@ -48,7 +48,7 @@ class reservationService {
           from: 'parkingsites',
           localField: 'parkingSite',
           foreignField: '_id',
-          as: 'parking'
+          as: 'parkingSite'
         }
       },
       {
