@@ -81,13 +81,13 @@ class reservationService {
                   }
                 },
                 {
-                  'parking.name': {
+                  'parkingSite.name': {
                     $regex: `${reqQuery.keyword}`,
                     $options: 'i'
                   }
                 },
                 {
-                  'parking.location.address': {
+                  'parkingSite.location.address': {
                     $regex: `${reqQuery.keyword}`,
                     $options: 'i'
                   }

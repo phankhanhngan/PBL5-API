@@ -15,13 +15,11 @@ reservationRouter
 
 reservationRouter.use(authController.protect);
 
-reservationRouter
-  .route('/myreserve')
-  .get(
-    authController.restrictTo('user'),
-    reservationController.getMyReservation,
-    reservationController.searchMy
-  );
+reservationRouter.route('/myreserve').get(
+  // authController.restrictTo('user'),
+  reservationController.getMyReservation,
+  reservationController.searchMy
+);
 
 reservationRouter
   .route('/')
