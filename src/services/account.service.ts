@@ -30,7 +30,7 @@ class accountService {
   };
 
   delete = (id: string) => {
-    return Account.findByIdAndDelete(id);
+    return Account.findByIdAndUpdate(id, {isActive: false});
   };
 
   search = (reqQuery) => {
