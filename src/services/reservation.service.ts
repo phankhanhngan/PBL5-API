@@ -22,9 +22,9 @@ class reservationService {
     return reservation.findById(id);
   };
 
-  getByLp = async (lpNumber: string) => {
+  getByLpPs = async (lpNumber: string, parkingSiteId: string) => {
     return reservation
-      .find({ lpNumber: lpNumber })
+      .find({ lpNumber: lpNumber, parkingSite: parkingSiteId })
       .sort({ reservingTime: -1 })
       .limit(1);
   };

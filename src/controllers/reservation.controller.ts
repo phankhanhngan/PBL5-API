@@ -101,36 +101,56 @@ class reservationController {
   };
 
   checkin = async (req: Request, res: Response, next: NextFunction) => {
-    const { lpNumber } = req.query;
-    const reservation = await this.reservationService.getByLp(
-      lpNumber.toString()
-    );
-    if (reservation[0] !== undefined) {
-      if (
-        new Date().getTime() - reservation[0].reservingTime.getTime() >
-          3600000 ||
-        reservation[0].enteringTime !== undefined
-      ) {
-        return next(
-          new AppError(
-            'You have been checked in before or your registration has expired!'
-          )
-        );
-      } else {
-        res.status(200).json({
-          status: 'success',
-          data: {
-            reservation
-          }
-        });
-        res.locals.reservation = reservation[0]._id;
-        res.locals.parkingSite = reservation[0].parkingSite;
-        return next();
-      }
-    } else {
-      return next(
-        new AppError('There is no reservation found with that lp number!')
+    try {
+      const { lpNumber, parkingSite } = req.query;
+      const reservation = await this.reservationService.getByLpPs(
+        lpNumber.toString(),
+        parkingSite.toString()
       );
+      if (reservation[0] !== undefined) {
+        if (
+          new Date().getTime() - reservation[0].reservingTime.getTime() >
+            3600000 ||
+          reservation[0].enteringTime !== undefined
+        ) {
+          return next(
+            new AppError(
+              'You have been checked in before or your registration has expired!'
+            )
+          );
+        } else {
+          res.status(200).json({
+            status: 'success',
+            data: {
+              reservation
+            }
+          });
+          res.locals.reservation = reservation[0]._id;
+          res.locals.parkingSite = reservation[0].parkingSite;
+          res.locals.opt = 'checkin';
+          return next();
+        }
+      } else {
+        return next(
+          new AppError('There is no reservation found with that lp number!')
+        );
+      }
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  checkout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { parkingSite } = req.query;
+      res.locals.parkingSite = parkingSite;
+      res.locals.opt = 'checkout';
+      res.status(200).json({
+        status: 'success'
+      });
+      next();
+    } catch (err) {
+      return next(err);
     }
   };
 

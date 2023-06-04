@@ -76,10 +76,16 @@ class parkingsiteService {
     return parkingsite.find({ ...searchQuery }).sort({ availableSpot: -1 });
   };
 
-  updateSpot = (id: string) => {
-    return parkingsite.findByIdAndUpdate(id, {
-      $inc: { availableSpot: -1 }
-    });
+  updateSpot = (id: string, opt: string) => {
+    if (opt === 'checkout') {
+      return parkingsite.findByIdAndUpdate(id, {
+        $inc: { availableSpot: 1 }
+      });
+    } else if (opt === 'checkin') {
+      return parkingsite.findByIdAndUpdate(id, {
+        $inc: { availableSpot: -1 }
+      });
+    }
   };
 
   isAvailable = (id: string) => {
