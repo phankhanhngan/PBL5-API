@@ -13,6 +13,10 @@ reservationRouter
     parkingsiteController.updateSpot
   );
 
+reservationRouter
+  .route('/checkout')
+  .get(reservationController.checkout, parkingsiteController.updateSpot);
+
 reservationRouter.use(authController.protect);
 
 reservationRouter.route('/myreserve').get(

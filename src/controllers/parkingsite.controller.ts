@@ -165,7 +165,10 @@ class parkingsiteController {
 
   updateSpot = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.parkingsiteService.updateSpot(res.locals.parkingSite);
+      await this.parkingsiteService.updateSpot(
+        res.locals.parkingSite,
+        res.locals.opt
+      );
     } catch (err) {
       next(err);
     }
